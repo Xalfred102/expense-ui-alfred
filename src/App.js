@@ -62,12 +62,12 @@ function App() {
   return (
     <div>
       
-      <AppBar position="static">
+      <AppBar position="static" style={{ backgroundColor: '#333' }}>
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Expense Tracker
           </Typography>
-          <Button color="inherit">Login</Button>
+          <Button color="inherit">Logout</Button>
         </Toolbar>
       </AppBar>
       <Container maxWidth="md" style={{ backgroundColor: '#f0f0f0', backgroundImage: 'url("/background.jpg")', backgroundSize: 'cover', padding: '20px', borderRadius: '10px', marginTop: '20px' }}>
@@ -96,7 +96,7 @@ function App() {
             onChange={(newValue) => setDate(newValue)}
             renderInput={(params) => <TextField {...params} variant="outlined" fullWidth margin="normal" />}
           />
-          <Button type="submit" variant="contained" color="primary" style={{ marginTop: '10px' }}>Save</Button>
+          <Button type="submit" variant="contained" color="primary" style={{ marginTop: '10px', backgroundColor: 'orange' }}>Save</Button>
         </form>
         
         <Typography variant="h5" align="center" gutterBottom style={{ marginTop: '20px' }}>My Expenses</Typography>
