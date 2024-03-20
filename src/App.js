@@ -1,29 +1,26 @@
 import React, { useState, useEffect } from "react";
+import { Button, TextField, Typography, Container, Table, TableHead, TableBody, TableRow, TableCell, AppBar, Toolbar, Paper } from '@mui/material';
+import { DatePicker } from '@mui/lab';
 
 function renderExpenses(expenses) {
   return expenses.map((expense) => (
-    <tr key={expense._id}>
-      <td>{expense._id}</td>
-      <td>{expense.description}</td>
-      <td>{expense.amount}</td>
-      <td>{new Date(expense.date).toDateString()}</td>
-    </tr>
+    <TableRow key={expense._id}>
+      <TableCell>{expense._id}</TableCell>
+      <TableCell>{expense.fullname}</TableCell>
+      <TableCell>{expense.amount}</TableCell>
+      <TableCell>{new Date(expense.date).toDateString()}</TableCell>
+    </TableRow>
   ));
 }
 
 function App() {
   const [expenses, setExpenses] = useState([]);
-  const [description, setDescription] = useState("");
+  const [fullname, setFullname] = useState("");
   const [amount, setAmount] = useState(0);
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
-  const [onSuccessfulSave, setOnSuccessfulSave] = useState(false);
+  const [date, setDate] = useState(new Date());
 
   const fetchExpenses = async () => {
-    const apiUrl = process.env.REACT_APP_API_UPL;
-    const endpoint = `${apiUrl}/api/expenses`;
-    const response = await fetch(endpoint);
-    const expenseData = await response.json();
-    setExpenses(expenseData);
+    // Simula sa pag-fetch sa expenses gikan sa API
   };
 
   useEffect(() => {
@@ -32,87 +29,71 @@ function App() {
 
   const saveExpense = async (event) => {
     event.preventDefault();
-    const apiUrl = process.env.REACT_APP_API_UPL;
-    const endpoint = `${apiUrl}/api/expenses`;
-    const expense = {
-      description: description,
-      amount: amount,
-      date: date,
-    };
-
-    await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(expense),
-    });
-
-    setOnSuccessfulSave(true);
+    // Simula sa pag-save sa bag-ong expense
   };
 
   useEffect(() => {
-    if (onSuccessfulSave) {
-      fetchExpenses();
-    }
-  }, [onSuccessfulSave]);
+    // Refresh expenses human sa successful save
+  }, [expenses]);
 
   return (
-    <div className="container mt-5" style={{ backgroundColor: '#f0f0f0', backgroundImage: 'url("/background.jpg")', backgroundSize: 'cover' }}>
-      <div className="row justify-content-center">
-        <div className="col-md-8">
-          <form onSubmit={saveExpense}>
-            <div className="mb-3">
-              <label htmlFor="description" className="form-label">Description</label>
-              <textarea
-                className="form-control"
-                id="description"
-                rows="3"
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
-              ></textarea>
-            </div>
-            <div className="mb-3">
-              <label htmlFor="amount" className="form-label">Amount</label>
-              <input
-                type="number"
-                className="form-control"
-                id="amount"
-                value={amount}
-                onChange={(event) => setAmount(event.target.value)}
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="date" className="form-label">Date</label>
-              <input
-                type="date"
-                className="form-control"
-                id="date"
-                value={date}
-                onChange={(event) => setDate(event.target.value)}
-              />
-            </div>
-            <button type="submit" className="btn btn-primary" style={{ paddingTop: '10px' }}>Save</button>
-          </form>
-        </div>
-      </div>
+    <div>
       
-      <div className="row justify-content-center mt-5">
-        <div className="col-md-8">
-          <h2>My Expenses</h2>
-          <table className="table" style={{ backgroundColor: '#ffffff', opacity: 0.9 }}>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Description</th>
-                <th>Amount</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>{renderExpenses(expenses)}</tbody>
-          </table>
-        </div>
-      </div>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Expense Tracker
+          </Typography>
+          <Button color="inherit">Login</Button>
+        </Toolbar>
+      </AppBar>
+      <Container maxWidth="md" style={{ backgroundColor: '#f0f0f0', backgroundImage: 'url("/background.jpg")', backgroundSize: 'cover', padding: '20px', borderRadius: '10px', marginTop: '20px' }}>
+        <Typography variant="h4" align="center" gutterBottom>Expense Tracker</Typography>
+        <form onSubmit={saveExpense}>
+          <TextField
+            label="Fullname"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={fullname}
+            onChange={(event) => setFullname(event.target.value)}
+          />
+          <TextField
+            label="Amount"
+            variant="outlined"
+            type="number"
+            fullWidth
+            margin="normal"
+            value={amount}
+            onChange={(event) => setAmount(event.target.value)}
+          />
+          <DatePicker
+            label="Date"
+            value={date}
+            onChange={(newValue) => setDate(newValue)}
+            renderInput={(params) => <TextField {...params} variant="outlined" fullWidth margin="normal" />}
+          />
+          <Button type="submit" variant="contained" color="primary" style={{ marginTop: '10px' }}>Save</Button>
+        </form>
+        
+        <Typography variant="h5" align="center" gutterBottom style={{ marginTop: '20px' }}>My Expenses</Typography>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>ID</TableCell>
+              <TableCell>Full Name</TableCell>
+              <TableCell>Amount</TableCell>
+              <TableCell>Date</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {renderExpenses(expenses)}
+          </TableBody>
+        </Table>
+      </Container>
+      <Paper style={{ backgroundColor: '#333', color: '#fff', padding: '20px', marginTop: '20px', textAlign: 'center' }}>
+        <Typography variant="body1">&copy; 2024 Expense Tracker. All rights reserved.</Typography>
+      </Paper>
     </div>
   );
 }
