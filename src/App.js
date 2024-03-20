@@ -4,12 +4,12 @@ import { DatePicker } from '@mui/lab';
 
 function renderExpenses(expenses) {
   return expenses.map((expense) => (
-    <TableRow key={expense._id}>
-      <TableCell>{expense._id}</TableCell>
-      <TableCell>{expense.fullname}</TableCell>
-      <TableCell>{expense.amount}</TableCell>
-      <TableCell>{new Date(expense.date).toDateString()}</TableCell>
-    </TableRow>
+    <tr key={expense._id}>
+      <td>{expense._id}</td>
+      <td>{expense.fullname}</td>
+      <td>{expense.amount}</td>
+      <td>{new Date(expense.date).toDateString()}</td>
+    </tr>
   ));
 }
 
@@ -17,10 +17,15 @@ function App() {
   const [expenses, setExpenses] = useState([]);
   const [fullname, setFullname] = useState("");
   const [amount, setAmount] = useState(0);
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [onSuccessfulSave, setOnSuccessfulSave] = useState(false);
 
   const fetchExpenses = async () => {
-    // Simula sa pag-fetch sa expenses gikan sa API
+    const apiUrl = process.env.REACT_APP_API_UPL;
+    const endpoint = `${apiUrl}/api/expenses`;
+    const response = await fetch(endpoint);
+    const expenseData = await response.json();
+    setExpenses(expenseData);
   };
 
   useEffect(() => {
@@ -29,12 +34,30 @@ function App() {
 
   const saveExpense = async (event) => {
     event.preventDefault();
-    // Simula sa pag-save sa bag-ong expense
+    const apiUrl = process.env.REACT_APP_API_UPL;
+    const endpoint = `${apiUrl}/api/expenses`;
+    const expense = {
+      fullname: fullname,
+      amount: amount,
+      date: date,
+    };
+
+    await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(expense),
+    });
+
+    setOnSuccessfulSave(true);
   };
 
   useEffect(() => {
-    // Refresh expenses human sa successful save
-  }, [expenses]);
+    if (onSuccessfulSave) {
+      fetchExpenses();
+    }
+  }, [onSuccessfulSave]);
 
   return (
     <div>
